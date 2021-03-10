@@ -21,6 +21,9 @@ router.post("/api/notes", (req, res) => {
     } else {
         freshNote.id = (notes[notes.length - 1].id + 1);
     }
+    notes.push(freshNote);
+    let jsonStore = JSON.stringify(store)
+    fs.write
 })
 
 // create a delete request
