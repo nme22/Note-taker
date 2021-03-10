@@ -15,16 +15,29 @@ router.get('/notes', (req, res) => {
 
 // create a post request
 router.post("/api/notes", (req, res) => {
-    const freshNote = req.body;
-    if (notes.length === 0) {
-        freshNote.id = 1
-    } else {
-        freshNote.id = (notes[notes.length - 1].id + 1);
-    }
-    notes.push(freshNote);
-    let jsonStore = JSON.stringify(store)
-    fs.write
-})
+    fs.readFile(path.join(__dirname, "/db/db.json"), "utf8", (err, data) => {
+        if (err) throw err;
+        const db = JSON.parse(data);
+        const newDB = [];
+
+        db.push(req.body);
+
+        for (let i = 0; i < db.length; i++) {
+            const newNote = {
+                title: db[i].title,
+                text: db[i].text,
+                id: i
+            };
+
+            newDB.push(newNote);
+        }
+
+        fs.writeFile(path.join(__dirname, "/db/db.json"), JSON.stringify(newDB, null, 2), (err) => {
+            if (err) throw err;
+            res.json(req.body);
+        });
+    });
+});
 
 // create a delete request
 
