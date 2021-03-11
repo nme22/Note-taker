@@ -17,3 +17,5 @@ router.get("/api/notes", (req, res) => {
         res.json(JSON.parse(data));
     });
 });
+
+module.exports = router;
