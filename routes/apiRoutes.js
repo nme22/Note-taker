@@ -9,9 +9,17 @@ module.exports = function (router) {
         return res.json(notes)
     })
 
-    // create a post request
-    router.post("/api/notes/:id", (req, res) => {
+    // create a get request by id
+    router.get("/api/notes/:id", (req, res) => {
         const id = req.params.id;
+        let found;
+        notes.forEach(n => {
+            if (id == n.id) {
+                found = n;
+                return res.json(n)
+            }
+        })
+        return res.json(false)
     });
 
     // create a delete request
