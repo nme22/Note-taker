@@ -1,37 +1,25 @@
 // import items needed
+const path = require("path");
 const fs = require("fs");
+const router = require('express').Router();
+let notes = require("../db/db.json")
 
-module.exports = function (router) {
-    let notes = require("../db/db.json")
+router.route('/notes')
+    .get((req, res) => {
+        res.json(notes)
+    })
+    .post((req, res) => {
+        const newNote = req.body;
 
-    // make a GET request with all notes from the database
-    router.get('/notes', (request, response) => {
-        return response.json(notes)
-    });
+        let id = 1;
 
-    // create a get request by id
-    router.get("/api/notes/:id", (request, response) => {
-        const id = request.params.id;
-        let find;
-        notes.forEach(n => {
-            if (id == n.id) {
-                find = n;
-                return response.json(n)
-            }
-        })
-        return response.json(false)
-    });
-
-
-    // create a post request for the notes
-    router.post("/api/notes", (request, response) => {
-        const freshNote = request.body;
         if (notes.length === 0) {
-            freshNote.id = 1
+            newNote.id = 1
         } else {
-            freshNote.id = (notes[notes.length - 1].id + 1);
+            newNote.id = id + 1
         }
-        notes.push(freshNote);
+
+        notes.push(newNote);
         let jsonNotes = JSON.stringify(notes)
         fs.writeFile("./db/db.json", jsonNotes, function (err) {
             if (err) {
@@ -39,14 +27,24 @@ module.exports = function (router) {
             }
             console.log("Success!");
         })
-        response.json(true)
+        res.json(true)
     })
 
-
-
-    // create a delete request
-    router.delete("/api/notes/:id", (request, response) => {
-        const id = request.params.id;
+router.route('/notes/:id')
+    .get((req, res) => {
+        const id = req.params.id;
+        let find;
+        notes.forEach(n => {
+            if (id == n.id) {
+                find = n;
+                return res.json(n)
+            }
+        })
+        res.json(false)
+    })
+    .delete((req, res) => {
+        const id = req.params.id;
+        console.log(id)
         notes.forEach((n, index) => {
             if (id == n.id) {
                 notes.splice(index, 1)
@@ -61,6 +59,8 @@ module.exports = function (router) {
 
             }
         })
-        response.json(true);
+        res.json(true);
     })
-}
+
+
+module.exports = router;

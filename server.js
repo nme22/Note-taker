@@ -5,8 +5,6 @@ const express = require('express')
 const htmlRoutes = require('./routes/htmlRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 
-
-
 // Initialize the application and create my port
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+app.use(function (req, res, next) {
+    // do logging
+    next(); // make sure we go to the next routes and don't stop here
+});
 app.use(express.static('public'));
 
 // bring in routes
